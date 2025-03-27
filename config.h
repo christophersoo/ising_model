@@ -3,7 +3,7 @@
 
 #define DIM 3
 #define N 100
-#define SWEEP 10000
-#define CONFS 1000000
+#define SWEEP 100
+#define CONFS 100
 
 #endif
