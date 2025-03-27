@@ -5,8 +5,6 @@ import numpy as np
 # Read the CSV data
 data = pd.read_csv('output.csv')
 
-print(data["magnetisation"])
-
 betas = data['beta'].unique()
 magnetisation = data['magnetisation'].values
 energy_total = data['energy_total'].values
