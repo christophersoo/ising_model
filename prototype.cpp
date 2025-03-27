@@ -94,20 +94,19 @@ void MC_SWEEP(double beta) {
 
 int main() {
     init();
-    long long avg_energy = 0;
-    long long avg_magnet = 0;
-    for (double beta = 0; beta < 5; beta=beta+0.1){
-        ofstream file("confs/output" + to_string(beta * 10) + ".csv");
-        file << "conf_num, energy_total, magnetisation" << endl;
+    ofstream file("output.csv");
+    file << "beta, energy_total, magnetisation" << endl;
+    for (double beta = 0; beta < 2; beta += 0.1) {
         for (long long j = 0; j < CONFS; j++) {
             for (long long k = 0; k < SWEEP; k++) {
                 MC_SWEEP(beta);
             }
-            cout << "beta " << beta << ", conf" << j << " completed." << endl;
-            file << j << ", " << energy_tot() << ", " << magnet_tot() << endl;
+            cout << "beta " << beta << ", conf " << j << " completed." << endl;
+            file << beta << ", " << energy_tot() << ", " << magnet_tot() << endl;
         }
-        file.close();
     }
+    file.close();
+    
     cout << "Successfully created configurations." << endl;
     return 0;
 }
