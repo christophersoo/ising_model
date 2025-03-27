@@ -1,22 +1,27 @@
 #include <iostream>
 #include "config.h"
 #include <fstream>
-#include <bitset>
+#include <vector>
 #include <random>
+#include <cmath>
+
 using namespace std;
 
 constexpr long long power(long long base, long long exp) {
-    return (exp == 0) ? 1 : base * power(base, exp - 1);
+    long long result = 1;
+    while (exp--) result *= base;
+    return result;
 }
+
 constexpr long long LEN = power(N, DIM);
 
-bitset<LEN> state;
+vector<char> state(LEN);
 random_device rd;
 mt19937 gen(rd());
 uniform_int_distribution<long long> dist(0, LEN - 1);
 uniform_real_distribution<double> prob(0.0, 1.0);
 
-long long flatten(long long idx_arr[]) {
+inline long long flatten(const long long idx_arr[]) {
     long long idx = 0, factor = 1;
     for (long long i = DIM - 1; i >= 0; i--) {
         idx += idx_arr[i] * factor;
@@ -25,7 +30,7 @@ long long flatten(long long idx_arr[]) {
     return idx;
 }
 
-void unflatten(long long idx, long long idx_arr[]) {
+inline void unflatten(long long idx, long long idx_arr[]) {
     for (long long i = 0; i < DIM; i++) {
         idx_arr[i] = idx % N;
         idx /= N;
@@ -42,13 +47,18 @@ long long energy_tot() {
         long long sum_neighbors = 0;
 
         for (long long d = 0; d < DIM; d++) {
-            idx_arr[d] = (idx_arr[d] + 1) % N;
+            long long neighbor_idx = idx_arr[d];
+            
+            // Right neighbor
+            idx_arr[d] = (neighbor_idx + 1) % N;
             sum_neighbors += 2 * state[flatten(idx_arr)] - 1;
 
-            idx_arr[d] = (idx_arr[d] - 2 + N) % N;
+            // Left neighbor
+            idx_arr[d] = (neighbor_idx - 1 + N) % N;
             sum_neighbors += 2 * state[flatten(idx_arr)] - 1;
 
-            idx_arr[d] = (idx_arr[d] + 1) % N;
+            // Restore original index
+            idx_arr[d] = neighbor_idx;
         }
         energy += -spin * sum_neighbors;
     }
@@ -70,43 +80,49 @@ void init() {
 }
 
 void MC_SWEEP(double beta) {
-    long long s_idxarr[DIM];
     long long s_idx = dist(gen);
+    long long s_idxarr[DIM];
+
     unflatten(s_idx, s_idxarr);
     long long sum_neighbors = 0;
+
     for (long long d = 0; d < DIM; d++) {
-        s_idxarr[d] = (s_idxarr[d] + 1) % N;
+        long long neighbor_idx = s_idxarr[d];
+
+        // Right neighbor
+        s_idxarr[d] = (neighbor_idx + 1) % N;
         sum_neighbors += 2 * state[flatten(s_idxarr)] - 1;
 
-        s_idxarr[d] = (s_idxarr[d] - 2 + N) % N;
+        // Left neighbor
+        s_idxarr[d] = (neighbor_idx - 1 + N) % N;
         sum_neighbors += 2 * state[flatten(s_idxarr)] - 1;
 
-        s_idxarr[d] = (s_idxarr[d] + 1) % N;
+        // Restore original index
+        s_idxarr[d] = neighbor_idx;
     }
 
     long long S_i = 2 * state[s_idx] - 1;
     long long delta_E = 2 * S_i * sum_neighbors;
-    double p_e = exp(-delta_E * beta);
-    if (prob(gen) < p_e) {
-        state.flip(s_idx);
+    if (delta_E <= 0 || prob(gen) < exp(-delta_E * beta)) {
+        state[s_idx] = !state[s_idx];  // Flip the spin
     }
 }
 
 int main() {
     init();
     ofstream file("output.csv");
-    file << "beta, energy_total, magnetisation" << endl;
+    file << "beta,energy_total,magnetisation" << endl;
+
     for (double beta = 0; beta < 2; beta += 0.1) {
         for (long long j = 0; j < CONFS; j++) {
             for (long long k = 0; k < SWEEP; k++) {
                 MC_SWEEP(beta);
             }
             cout << "beta " << beta << ", conf " << j << " completed." << endl;
-            file << beta << ", " << energy_tot() << ", " << magnet_tot() << endl;
+            file << beta << "," << energy_tot() << "," << magnet_tot() << endl;
         }
     }
     file.close();
-    
     cout << "Successfully created configurations." << endl;
     return 0;
 }
