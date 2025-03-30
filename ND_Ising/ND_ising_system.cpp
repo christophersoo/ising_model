@@ -12,6 +12,11 @@ void ND_System::init(){
     }
 }
 
+std::vector<char>& ND_System::get_state(){
+    return this->state;
+}
+
+
 inline long long ND_System::flatten(const long long idx_arr[]) {
     long long idx = 0, factor = 1;
     for (long long i = DIM - 1; i >= 0; i--) {

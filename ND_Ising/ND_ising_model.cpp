@@ -7,6 +7,7 @@ long long pow_int(long long base, long long exp) {
     return result;
 }
 
+
 int main(int argc, char* argv[]){
     if (argc != 6) {
         return 1;
@@ -14,7 +15,7 @@ int main(int argc, char* argv[]){
 
     int N = stoi(argv[1]);
     int DIM = stoi(argv[2]);
-    int SWEEP = stoi(argv[3]);
+    int MAX_SWEEP = stoi(argv[3]);
     int CONFS = stoi(argv[4]);
     float BETA = stof(argv[5]);
 
@@ -23,7 +24,7 @@ int main(int argc, char* argv[]){
     file << "id,energy_total,magnetisation" << endl;
 
     for (long long i = 0; i < CONFS; i++) {
-        for (long long j = 0; j < SWEEP; j++) {
+        for (long long j = 0; j < MAX_SWEEP; j++) {
             nd_sys.MC_SWEEP(BETA);
         }
         cout << "Conf number: " << i << ", beta: " << BETA << endl;
