@@ -17,15 +17,13 @@ int main(int argc, char* argv[]){
     float BETA = stof(argv[3]);
     int MAX_SWEEP = stoi(argv[4]);
 
-    cout << "Initialising System..." << endl;
     ND_System nd_sys(N, DIM, pow_int(N, DIM));
-    ofstream file("sweeps.csv");
+    ofstream file("./data/sweeps.csv");
     file << "sweep,energy,magnetisation" << endl;
     for (int i = 0; i < MAX_SWEEP; i++){
         nd_sys.MC_SWEEP(BETA);
         file << i << "," << nd_sys.energy_tot() << "," << nd_sys.magnet_tot() << endl;
     }
-    cout << "Sweeps Recorded." << endl;
     file.close();
     return 0;
 }

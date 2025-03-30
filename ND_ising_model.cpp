@@ -18,9 +18,8 @@ int main(int argc, char* argv[]){
     int CONFS = stoi(argv[4]);
     float BETA = stof(argv[5]);
 
-    cout << "Initialising System..." << endl;
     ND_System nd_sys(N, DIM, pow_int(N, DIM));
-    ofstream file("output.csv");
+    ofstream file("./data/output.csv");
     file << "id,energy_total,magnetisation" << endl;
 
     for (long long i = 0; i < CONFS; i++) {
@@ -31,6 +30,5 @@ int main(int argc, char* argv[]){
     }
 
     file.close();
-    cout << "Successfully Created " << CONFS << " Configurations." << endl;
     return 0;
 }
