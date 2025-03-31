@@ -20,7 +20,6 @@ class ND_System{
         inline void unflatten(long long idx, long long idx_arr[]);
         long long energy_tot();
         long long magnet_tot();
-        std::vector<char>& get_state();
         void MC_SWEEP(float beta);
 
     private:
