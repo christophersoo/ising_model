@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
     int N = stoi(argv[1]);
     int DIM = stoi(argv[2]);
     float BETA = stof(argv[3]);
-    int MAX_SWEEP = stoi(argv[4]);
+    int SWEEP = stoi(argv[4]);
 
     // Define the system
     ND_System nd_sys(N, DIM, pow_int(N, DIM));
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
     file << "sweep,energy,magnetisation" << endl;
 
     // We loop through the amount of sweeps and dump them into the csv file
-    for (int i = 0; i < MAX_SWEEP; i++){
+    for (int i = 0; i < SWEEP; i++){
         nd_sys.MC_SWEEP(BETA);
         // Dumps the data we get after each sweep and track their energy and magnetisation
         file << i << "," << nd_sys.energy_tot() << "," << nd_sys.magnet_tot() << endl;
